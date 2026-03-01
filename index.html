@@ -39,44 +39,34 @@ html, body {
 }
 
 /* ═══════════════════════════════════════════
-   HUD — single row on wide screens,
-         two rows on narrow phones
+   HUD — always single row, compact on mobile
 ═══════════════════════════════════════════ */
 #ui {
   position:fixed;
   top: env(safe-area-inset-top, 0px);
   left: env(safe-area-inset-left, 0px);
   right: env(safe-area-inset-right, 0px);
-  padding:6px 8px;
+  padding:4px 6px;
   display:grid;
-  /* 4 equal columns on desktop, 2×2 on mobile */
   grid-template-columns: repeat(4, 1fr);
-  gap:5px;
+  gap:4px;
   pointer-events:none;
   z-index:10;
-}
-
-/* On portrait phones: 2 columns, 2 rows */
-@media (max-width:600px) and (orientation:portrait) {
-  #ui { grid-template-columns: repeat(2, 1fr); }
-}
-/* On very wide landscape: keep 4 cols but smaller */
-@media (orientation:landscape) and (max-height:500px) {
-  #ui { padding:4px 8px; gap:4px; }
 }
 
 .hud-box {
   background:rgba(0,15,35,0.88);
   border:1px solid rgba(0,200,255,0.28);
-  border-radius:5px;
-  padding:5px 8px;
+  border-radius:4px;
+  padding:3px 6px;
   backdrop-filter:blur(6px);
   -webkit-backdrop-filter:blur(6px);
   overflow:hidden;
+  min-width:0;
 }
 
 .hud-label {
-  font-size:clamp(7px,1.8vw,10px);
+  font-size:clamp(6px,1.5vw,9px);
   color:rgba(0,200,255,0.55);
   letter-spacing:1px;
   text-transform:uppercase;
@@ -84,7 +74,7 @@ html, body {
 }
 .hud-value {
   font-family:'Orbitron',sans-serif;
-  font-size:clamp(13px,3.8vw,24px);
+  font-size:clamp(11px,2.8vw,22px);
   font-weight:700;
   color:#00e5ff;
   line-height:1.1;
@@ -92,11 +82,11 @@ html, body {
   overflow:hidden;
   text-overflow:ellipsis;
 }
-#lives-box .hud-value { color:#ff4d6d; font-size:clamp(11px,3.2vw,20px); }
+#lives-box .hud-value { color:#ff4d6d; font-size:clamp(10px,2.4vw,18px); }
 #wave-box  .hud-value { color:#ffd166; }
 #budget-box { border-color:rgba(50,255,120,0.35); }
 #budget-box .hud-label { color:rgba(50,255,120,0.65); }
-#budgetDisplay { color:#2eff8a; font-size:clamp(12px,3.2vw,20px); }
+#budgetDisplay { color:#2eff8a; font-size:clamp(10px,2.4vw,18px); }
 #budgetDisplay.warning  { color:#ffd166; }
 #budgetDisplay.critical { color:#ff4d6d; animation:bpulse .5s infinite alternate; }
 @keyframes bpulse { from{opacity:1} to{opacity:.3} }
@@ -106,6 +96,14 @@ html, body {
   background:rgba(0,0,0,.4);
   border-radius:2px; margin-top:3px; overflow:hidden;
 }
+/* Extra tight on very small phones (iPhone SE etc) */
+@media (max-width:375px) {
+  #ui { padding:3px 4px; gap:3px; }
+  .hud-box { padding:2px 4px; }
+  .hud-value { font-size:10px !important; }
+  .hud-label { font-size:6px !important; }
+}
+
 #budget-bar { height:100%; border-radius:2px; transition:width .3s,background .3s; }
 
 /* ═══════════════════════════════════════════
@@ -126,7 +124,7 @@ html, body {
 }
 
 #alert-banner {
-  top: calc(env(safe-area-inset-top,0px) + clamp(60px,14vw,80px));
+  top: calc(env(safe-area-inset-top,0px) + clamp(46px,10vw,62px));
   font-size:clamp(9px,2.5vw,12px);
   color:#ff4d6d; letter-spacing:2px;
   background:rgba(255,0,50,.12);
@@ -143,7 +141,7 @@ html, body {
   padding:clamp(7px,2vw,11px) clamp(14px,4vw,24px);
 }
 #bonus-toast {
-  top: calc(env(safe-area-inset-top,0px) + clamp(68px,16vw,92px));
+  top: calc(env(safe-area-inset-top,0px) + clamp(52px,12vw,72px));
   font-size:clamp(11px,3vw,15px);
   color:#2eff8a; letter-spacing:2px;
   background:rgba(0,80,40,.28);
@@ -157,9 +155,8 @@ html, body {
 ═══════════════════════════════════════════ */
 #miniLb {
   position:fixed;
-  /* Sit just below HUD — 2 rows on portrait mobile ≈ 80px, 1 row on desktop ≈ 60px */
-  top: calc(env(safe-area-inset-top,0px) + clamp(74px,20vw,90px));
-  right: calc(env(safe-area-inset-right,0px) + 8px);
+  top: calc(env(safe-area-inset-top,0px) + clamp(52px,14vw,68px));
+  right: calc(env(safe-area-inset-right,0px) + 6px);
   background:rgba(0,12,30,.88);
   border:1px solid rgba(0,200,255,.2);
   border-radius:5px;
@@ -417,8 +414,13 @@ html, body {
 const isMobile = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
 function vw() { return window.innerWidth; }
 function vh() { return window.innerHeight; }
-// Game scale relative to a 390×844 baseline (iPhone 14)
-function calcScale() { return Math.min(vw()/390, vh()/844, 1.6); }
+// Game scale relative to a 430×932 baseline (iPhone 16 Plus = largest common iPhone)
+// This ensures iPhone 16 (393px) renders at ~0.91 scale — visibly zoomed out
+function calcScale() {
+  const s = Math.min(vw()/430, vh()/932, 1.4);
+  // Extra reduction on mobile so nothing feels oversized
+  return isMobile ? Math.min(s, 0.92) : s;
+}
 let SCALE = calcScale();
 
 // ══════════════════════════════════════════════════
@@ -491,6 +493,21 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 let W, H, DPR;
 
+// ══════════════════════════════════════════════════
+// Constants
+// ══════════════════════════════════════════════════
+const MISSILE_COST   = 50000;
+const INITIAL_BUDGET = 2000000;
+const BONUS_AMOUNT   = 200000;
+
+// ══════════════════════════════════════════════════
+// State — must be declared BEFORE resize() is called
+// ══════════════════════════════════════════════════
+let state='idle', score=0, lives=3, wave=1, budget=INITIAL_BUDGET;
+let bombs=[], missiles=[], explosions=[], bonusCrates=[], sparkles=[], stars=[], buildings=[];
+let frameCount=0, spawnTimer=0, spawnInterval=120, waveTimer=0, alertFlash=0;
+let bonusSpawnTimer=0, noBudgetTimer=0, bonusToastTimer=0;
+
 function resize() {
   DPR = Math.min(window.devicePixelRatio||1, isMobile ? 2 : 3);
   W = window.innerWidth;
@@ -506,21 +523,6 @@ function resize() {
 resize();
 window.addEventListener('resize', resize);
 window.addEventListener('orientationchange', () => setTimeout(resize, 150));
-
-// ══════════════════════════════════════════════════
-// Constants
-// ══════════════════════════════════════════════════
-const MISSILE_COST   = 50000;
-const INITIAL_BUDGET = 2000000;
-const BONUS_AMOUNT   = 200000;
-
-// ══════════════════════════════════════════════════
-// State
-// ══════════════════════════════════════════════════
-let state='idle', score=0, lives=3, wave=1, budget=INITIAL_BUDGET;
-let bombs=[], missiles=[], explosions=[], bonusCrates=[], sparkles=[], stars=[], buildings=[];
-let frameCount=0, spawnTimer=0, spawnInterval=120, waveTimer=0, alertFlash=0;
-let bonusSpawnTimer=0, noBudgetTimer=0, bonusToastTimer=0;
 
 // ══════════════════════════════════════════════════
 // Stars
