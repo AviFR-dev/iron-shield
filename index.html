@@ -517,7 +517,7 @@ html, body {
 
 <div id="alert-banner">⚠ INCOMING THREAT</div>
 <div id="no-budget-msg">⛔ NO FUNDS</div>
-<div id="bonus-toast">💰 +$200,000 FUNDS!</div>
+<div id="bonus-toast">💰 +$1,000,000 FUNDS!</div>
 <div id="combo-popup"></div>
 <div id="wave-banner"></div>
 <div id="accuracy-toast"></div>
@@ -579,7 +579,7 @@ html, body {
   <div id="instructions">
     TAP TO FIRE INTERCEPTORS · PROTECT TEL AVIV<br>
     🚀 EACH MISSILE = $50,000 · START BUDGET $2,000,000<br>
-    💰 TAP FALLING CRATES FOR +$200,000 BONUS<br>
+    💰 TAP FALLING CRATES FOR +$1,000,000 BONUS<br>
     🔥 CONSECUTIVE HITS BUILD YOUR COMBO MULTIPLIER<br>
     ⚡ FAST MISSILES & CLUSTER BOMBS IN LATER WAVES
   </div>
@@ -988,7 +988,7 @@ let W, H, DPR;
 // ══════════════════════════════════════════════════
 const MISSILE_COST   = 50000;
 const INITIAL_BUDGET = 2000000;
-const BONUS_AMOUNT   = 200000;
+const BONUS_AMOUNT   = 1000000;
 
 // ══════════════════════════════════════════════════
 // State
@@ -1535,7 +1535,7 @@ class BonusSparkle {
     ctx.font=`bold ${fs}px 'Orbitron',monospace`;
     ctx.textAlign='center'; ctx.fillStyle='#2eff8a';
     ctx.shadowColor='#2eff8a'; ctx.shadowBlur=9;
-    ctx.fillText('+$200K',this.x,this.y-rise);
+    ctx.fillText('+$1M',this.x,this.y-rise);
     ctx.restore();
   }
   isDone() { return this.age>=this.maxAge; }
