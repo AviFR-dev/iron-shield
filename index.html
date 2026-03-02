@@ -1856,9 +1856,9 @@ function gameLoop() {
     updateHUD();
   }
 
-  // Spawn bonus crates (rare)
-  if (++bonusSpawnTimer>900 && bonusCrates.filter(c=>!c.collected&&!c.isOffscreen()).length<2) {
-    if (Math.random()<.004) { bonusCrates.push(new BonusCrate()); bonusSpawnTimer=0; }
+  // Spawn bonus crate when budget drops to $200K or below
+  if (budget <= 200000 && bonusCrates.filter(c=>!c.collected&&!c.isOffscreen()).length===0) {
+    bonusCrates.push(new BonusCrate());
   }
 
   // Update bombs with cluster split support
