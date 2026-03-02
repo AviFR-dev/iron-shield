@@ -480,6 +480,30 @@ html, body {
   transition:opacity 0.2s;
 }
 #musicToggle.muted .bar { opacity:1; }
+/* Donate button */
+#donateBtn {
+  display:none;
+  margin-top:clamp(8px,2vh,14px);
+  font-family:'Orbitron',sans-serif;
+  font-size:clamp(10px,2.8vw,12px);
+  font-weight:700;
+  letter-spacing:2px;
+  color:#fff;
+  background:linear-gradient(135deg, #0070ba 0%, #003087 100%);
+  border:1px solid rgba(0,112,186,0.6);
+  padding:clamp(11px,3vw,14px) clamp(22px,6vw,36px);
+  border-radius:5px;
+  cursor:pointer;
+  transition:all .2s;
+  box-shadow:0 0 20px rgba(0,112,186,0.3);
+  min-height:48px;
+  text-decoration:none;
+  text-align:center;
+  white-space:nowrap;
+}
+#donateBtn:active { transform:scale(.96); }
+#donateBtn:hover { box-shadow:0 0 30px rgba(0,112,186,0.5); }
+#donateBtn .pp-icon { margin-right:6px; }
 </style>
 </head>
 <body>
@@ -576,6 +600,11 @@ html, body {
   </div>
 
   <button id="startBtn">ACTIVATE DEFENSE</button>
+
+  <a id="donateBtn" href="https://www.paypal.com/paypalme/netspid3r" target="_blank" rel="noopener">
+    <span class="pp-icon">☕</span>SUPPORT THE DEVELOPER
+  </a>
+
   <div id="instructions">
     TAP TO FIRE INTERCEPTORS · PROTECT TEL AVIV<br>
     🚀 EACH MISSILE = $50,000 · START BUDGET $2,000,000<br>
@@ -2232,6 +2261,7 @@ function startGame() {
   document.getElementById('statsRow').style.display    = 'none';
   document.getElementById('nameEntry').style.display   = 'none';
   document.getElementById('leaderboard').style.display = 'none';
+  document.getElementById('donateBtn').style.display   = 'none';
   document.getElementById('startBtn').textContent      = 'ACTIVATE DEFENSE';
   document.getElementById('no-budget-msg').style.opacity = '0';
   document.getElementById('bonus-toast').style.opacity   = '0';
@@ -2268,6 +2298,7 @@ async function endGame() {
   const sb=document.getElementById('submitScore');
   ni.value=''; sb.disabled=false; sb.textContent='SUBMIT TO GLOBAL BOARD';
   document.getElementById('startBtn').textContent='PLAY AGAIN';
+  document.getElementById('donateBtn').style.display='inline-block';
   document.getElementById('overlay').scrollTop=0;
   document.getElementById('overlay').style.display='flex';
   if (!isMobile) setTimeout(()=>ni.focus(),200);
